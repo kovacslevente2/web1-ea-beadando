@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 class="header">Web-programozás-1 Előadás Házi feladat</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu1.html">Edzéstervek</a></li>
+            <li><a href="menu2.html">Táplálkozás</a></li>
+            <li><a href="menu3.html" class="active">Táplálékkiegészítők</a></li>
+        </ul>
+    </nav>
+    <aside>
+        <h1>Kalóriaégetés</h1>
+    </aside>
+    <label for="exercise">Edzés típusa:</label>
+    <select id="exercise">
+        <option value="running">Futás</option>
+        <option value="jogging">Kocogás</option>
+        <option value="walking">Gyaloglás</option>
+        <option value="swimming">Úszás</option>
+        <option value="cycling">Kerékpározás</option>
+        <option value="dancing">Tánc</option>
+        <option value="weightlifting">Súlyzós edzés</option>
+        <option value="combinetraining">Kombinált edzés</option>
+    </select>
+    <label for="duration">Időtartam (perc):</label>
+    <input type="number" id="duration" value="30">
+    <label for="weight">Testsúly (kg):</label>
+    <input type="number" id="weight" value="70">
+    <button onclick="calculateCalories()">Számítás</button>
+    <p>Eredmény: <span id="result">----</span> kcal</p>
+
+    
+    <script>
+        let kcalWorker = new Worker('kcal.js');
+
+        function calculateCalories() {
+            let exercise = document.getElementById('exercise').value;
+            let duration = parseInt(document.getElementById('duration').value);
+            let weight = parseInt(document.getElementById('weight').value);
+
+            kcalWorker.postMessage({ exercise, duration, weight });
+
+            kcalWorker.onmessage = function(event) {
+                document.getElementById('result').innerText = event.data;
+            };
+        }
+
+        // Geolocation Api
+        const sucessCallback = (position) => {
+            console.log(position);
+        }
+
+        const errorCallback = (error) => {
+            console.error(error);
+        }
+
+
+      const wathchId =navigator.geolocation.watchPosition(sucessCallback, errorCallback);
+
+      navigator.geolocation.clearWatch(wathchId);
+     
+      
+    </script>
+    <script src="kcal.js"></script>
+    <footer>
+        <p>Készítő: Kovács Levente</p>
+        <p>Neptun kód: DSOCWP</p>
+    </footer>
+</body>
+</html>
