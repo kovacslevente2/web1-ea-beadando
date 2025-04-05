@@ -3,55 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Edzéstervek</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    
-
     <header>
         <h1 class="header">Web-programozás-1 Előadás Házi feladat</h1>
-        
-        </header>
-      
-          
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-              <li><a href="menu1.html" class="active">Edzéstervek</a></li>
-              <li><a href="menu2.html">Táplálkozás</a></li>
-              <li><a href="menu3.html">Táplálékkiegészítők</a></li>
-            </ul>
-        </nav>
-        <aside>
-            <h1>Menu1</h1>
-        </aside>
-        <section>
-            <h1>
-                
-            </h1>
-            <article>
-                <h2>Menu 1 oldala</h2>
-            </article>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="menu1.html" class="active">Edzéstervek</a></li>
+            <li><a href="menu2.html">Táplálkozás</a></li>
+            <li><a href="menu3.html">Táplálékkiegészítők</a></li>
+        </ul>
+    </nav>
+    <aside>
+        <h1>Heti Edzéstervek</h1>
+    </aside>
+    
+    <section class="workout-plans">
+        <h1>Edzésterv készítő</h1>
+        <form id="workoutForm">
+            <label for="workoutName">Gyakorlat  neve:</label>
+            <input type="text" id="workoutName" required>
 
-            <article>
-                <h2> Heti Edzésnapló</h2>
-                <canvas id="workoutChart" width="550" height="300"></canvas>
-            </article>
+            <label for="workoutType">Edzés típusa:</label>
+            <select id="workoutType" required>
+                <option value="Kardió">Kardió</option>
+                <option value="Súlyzós edzés">Súlyzós edzés</option>
+            </select>
 
-        </section>
-       <script src="canvas.js"></script>
-    
-       
-    
-    
-           
-    
-    <footer> 
+            <label for="workoutDuration">Időtartam (perc):</label>
+            <input type="number" id="workoutDuration" min="1" required>
+
+            <label for="workoutCalories">Kalóriaégetés (kcal):</label>
+            <input type="number" id="workoutCalories" min="1" required>
+
+            <div id="strengthFields" style="display: none;">
+                <label for="workoutWeight">Súly (kg):</label>
+                <input type="number" id="workoutWeight" min="1">
+
+                <label for="workoutReps">Ismétlések száma:</label>
+                <input type="number" id="workoutReps" min="1">
+            </div>
+
+            <button type="submit">Hozzáadás</button>
+        </form>
+
+        <div id="workoutList">
+            <h2>Edzéstervek</h2>
+            <div id="filteredWorkouts"></div>
+        </div>
+
+        <article>
+            <h2>Heti Edzésnapló</h2>
+            <canvas id="workoutChart" width="550" height="300"></canvas>
+        </article>
+    </section>
+
+    <script src="canvas.js"></script>
+    <script src="workout.js"></script>
+    <script>
+        const workouts = [];
+
+        document.getElementById('workoutType').addEventListener('change', function () {
+            const strengthFields = document.getElementById('strengthFields');
+            if (this.value === 'Súlyzós edzés') {
+                strengthFields.style.display = 'block';
+            } else {
+                strengthFields.style.display = 'none';
+            }
+        });
+
+        document.getElementById('workoutForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById('workoutName').value;
+            const type = document.getElementById('workoutType').value;
+            const duration = parseInt(document.getElementById('workoutDuration').value);
+            const calories = parseInt(document.getElementById('workoutCalories').value);
+
+            let workout;
+            if (type === 'Súlyzós edzés') {
+                const weight = parseInt(document.getElementById('workoutWeight').value);
+                const reps = parseInt(document.getElementById('workoutReps').value);
+                workout = new StrengthWorkout(name, duration, calories, weight, reps);
+            } else {
+                workout = new Workout(name, type, duration, calories);
+            }
+
+            workouts.push(workout);
+            displayWorkouts();
+
+
+            this.reset();
+            document.getElementById('strengthFields').style.display = 'none';
+        });
+
+        function displayWorkouts() {
+            const workoutContainer = document.getElementById('filteredWorkouts');
+            workoutContainer.innerHTML = '';
+            workouts.forEach(workout => workout.displayWorkout(workoutContainer));
+        }
+    </script>
+
+    <footer>
         <p>Készítő: Kovács Levente</p>
         <p>Neptun kód: DSOCWP</p>
     </footer>
-    
 </body>
 </html>
